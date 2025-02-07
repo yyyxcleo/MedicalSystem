@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>前端调用USB连接的摄像头</title>
+</head>
+<body>
+<h1>前端调用USB连接的摄像头</h1>
+<video id="videoElement" autoplay></video>
+<button id="captureButton">拍照</button>
+<canvas id="canvasElement"></canvas>
+<script>
+    // 获取视频流
+    navigator.mediaDevices.getUserMedia({video: true})
+        .then(function (stream) {
+            var videoElement = document.getElementById('videoElement');
+            // 显示视频流
+            videoElement.srcObject = stream;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    var videoElement = document.getElementById('videoElement');
+    var captureButton = document.getElementById('captureButton');
+    var canvasElement = document.getElementById('canvasElement');
+    var canvasContext = canvasElement.getContext('2d');
+
+    // 拍照处理
+    captureButton.addEventListener('click', function() {
+        canvasContext.clearRect(0, 0, canvasElement.width, canvasElement.height);  // 清空画布
+
+        var brightnessValue = 1.2;  // 亮度调整值，可根据需求自行调整
+        var sharpnessValue = 1.5;   // 清晰度调整值，可根据需求自行调整
+
+        // 调整亮度和清晰度
+        canvasContext.filter = 'brightness(' + brightnessValue + ') contrast(' + sharpnessValue + ')';
+        canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+
+        var photoURL = canvasElement.toDataURL('image/jpeg');
+        // 将图片保存或展示到页面上
+        // 可以使用图片的 base64 数据进行操作
+    });
+</script>
+</body>
+</html>
